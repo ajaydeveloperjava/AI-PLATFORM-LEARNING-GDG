@@ -4,30 +4,15 @@ WORKDIR /app
 COPY . .
 RUN mvn clean package -DskipTests
 
-
 # ---------- STAGE 2: Runtime ----------
-FROM ubuntu:22.04
-
+FROM eclipse-temurin:17-jre
 WORKDIR /app
-
-# Install Java & required tools
-RUN apt-get update && apt-get install -y \
-    curl \
-    openjdk-17-jdk \
-    ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Ollama (CPU)
-RUN curl -fsSL https://ollama.com/install.sh | sh
 
 # Copy Spring Boot JAR
 COPY --from=build /app/target/*.jar app.jar
 
-# Pull a SMALL model (IMPORTANT for Render)
-RUN ollama pull qwen:0.5b
-
 # Expose Spring Boot port
 EXPOSE 8080
 
-# Start Ollama + Spring Boot
-CMD ollama serve & java -jar app.jar
+# Start Spring Boot
+CMD ["java", "-jar", "app.jar"]
