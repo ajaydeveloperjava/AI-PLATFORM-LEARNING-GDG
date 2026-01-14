@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Required for mobile responsiveness -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS (if not already in layout) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+    <style>
+        body{
+            margin:0;
+            min-height:100vh;
+            background:linear-gradient(135deg,#001f3f,#033f74);
+            color:white;
+            font-family:"Segoe UI",Arial,sans-serif;
+        }
+
+        .header{
+            padding:20px 30px;
+            background:#001f3f;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+
+        .header h2{
+            margin:0;
+            font-weight:700;
+        }
+
+        .btn-hover:hover{
+            transform:scale(1.05);
+            transition:.25s;
+        }
+
+        .main{
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            min-height:calc(100vh - 80px);
+            padding:20px;
+        }
+
+        .profile-card{
+            background:white;
+            color:#001f3f;
+            border-radius:18px;
+            padding:35px;
+            width:100%;
+            max-width:420px;
+            text-align:center;
+            box-shadow:0 12px 35px rgba(0,0,0,.3);
+            transition:.3s;
+        }
+
+        .profile-card:hover{
+            transform:translateY(-8px);
+            box-shadow:0 18px 45px rgba(0,0,0,.4);
+        }
+
+        .profile-icon{
+            font-size:4rem;
+            color:#033f74;
+            margin-bottom:15px;
+        }
+
+        .profile-card h3{
+            font-weight:700;
+            margin-bottom:20px;
+        }
+
+        .profile-info{
+            font-size:16px;
+            margin-bottom:12px;
+        }
+
+        .profile-info span{
+            font-weight:600;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <h2>AI Learning Platform</h2>
+    <div>
+        <a href="/auth/home" class="btn btn-secondary btn-hover me-2">
+            <i class="bi bi-house"></i> Home
+        </a>
+        <a href="/auth/logout" class="btn btn-danger btn-hover">
+            Logout
+        </a>
+    </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+    <div class="profile-card">
+        <i class="bi bi-person-circle profile-icon"></i>
+        <h3>User Profile</h3>
+
+        <div class="profile-info">
+            Username: <span th:text="${user.username}"></span>
+        </div>
+
+        <div class="profile-info">
+            Email: <span th:text="${user.email}"></span>
+        </div>
+
+        <a href="/auth/home" class="btn btn-primary mt-4 btn-hover">
+            Back to Home
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

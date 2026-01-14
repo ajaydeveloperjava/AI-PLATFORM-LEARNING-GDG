@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Required for mobile responsiveness -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS (if not already in layout) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>HackerAI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        :root{
+          --bg-primary: #0b1020;
+          --bg-secondary: #11162a;
+          --panel-user: #1f2937;
+          --panel-ai: #141b34;
+          --accent-primary: #38bdf8;
+          --accent-secondary: #a78bfa;
+          --accent-glow: #60c7ff;
+          --text-primary: #e5e7eb;
+          --text-secondary: #9ca3af;
+          --glass-bg: rgba(255,255,255,0.05);
+          --glass-border: rgba(255,255,255,0.12);
+          --shadow-light: rgba(0,0,0,0.4);
+          --shadow-glow: rgba(56,189,248,0.3);
+        }
+
+        *{margin:0;padding:0;box-sizing:border-box}
+
+        body{
+          font-family:"Inter",sans-serif;
+          background:
+            linear-gradient(135deg, #0b1020 0%, #1a1a2e 50%, #16213e 100%),
+            radial-gradient(circle at 20% 80%, rgba(56,189,248,0.15) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(167,139,250,0.15) 0%, transparent 50%);
+          color:var(--text-primary);
+          height:100vh;
+          overflow:hidden;
+          position: relative;
+        }
+
+        /* Animated Particles */
+        body::before {
+          content: '';
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          pointer-events: none;
+          background-image:
+            radial-gradient(2px 2px at 20px 30px, rgba(56,189,248,0.6), transparent),
+            radial-gradient(2px 2px at 90px 80px, rgba(167,139,250,0.6), transparent),
+            radial-gradient(1px 1px at 130px 40px, rgba(255,255,255,0.4), transparent);
+          background-repeat: repeat;
+          background-size: 200px 120px;
+          animation: floatParticles 25s linear infinite;
+          z-index: 1;
+        }
+
+        @keyframes floatParticles {
+          from { transform: translateY(0px) rotate(0deg); }
+          to { transform: translateY(-120px) rotate(360deg); }
+        }
+
+        .container{
+          height:100vh;
+          display:flex;
+          flex-direction:column;
+          position: relative;
+          z-index: 2;
+        }
+
+        /* HEADER */
+        .header{
+          height:72px;
+          padding:0 28px;
+          display:flex;
+          align-items:center;
+          justify-content:space-between;
+          background: rgba(15,18,45,0.95);
+          backdrop-filter: blur(25px);
+          border-bottom:1px solid var(--glass-border);
+          box-shadow: 0 8px 32px var(--shadow-light);
+        }
+
+        .logo{
+          font-size:24px;
+          font-weight:800;
+          background:linear-gradient(135deg, var(--accent-primary), var(--accent-secondary), var(--accent-glow));
+          -webkit-background-clip:text;
+          -webkit-text-fill-color:transparent;
+          background-clip:text;
+          text-shadow: 0 0 30px rgba(56,189,248,0.5);
+          letter-spacing: -0.5px;
+        }
+
+        .logo i {
+          margin-right: 8px;
+          animation: pulseGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+          0%, 100% { text-shadow: 0 0 20px rgba(56,189,248,0.5); }
+          50% { text-shadow: 0 0 40px rgba(56,189,248,0.8), 0 0 60px rgba(167,139,250,0.4); }
+        }
+
+        .actions {
+          display: flex;
+          gap: 12px;
+        }
+
+        .actions form{display:inline}
+
+        .btn{
+          padding:10px 18px;
+          border-radius:14px;
+          border:1px solid var(--glass-border);
+          background:var(--glass-bg);
+          color:var(--text-primary);
+          cursor:pointer;
+          font-weight:500;
+          transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          backdrop-filter: blur(10px);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .btn::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+          transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+          left: 100%;
+        }
+
+        .btn:hover{
+          background:rgba(255,255,255,0.12);
+          border-color: rgba(255,255,255,0.25);
+          transform: translateY(-2px);
+          box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+        }
+
+        .btn-danger{
+          border-color: rgba(239,68,68,0.4);
+          color: #fecaca;
+          background: rgba(239,68,68,0.1);
+        }
+
+        .btn-danger:hover {
+          background: rgba(239,68,68,0.25);
+          border-color: rgba(239,68,68,0.6);
+          box-shadow: 0 12px 30px rgba(239,68,68,0.3);
+        }
+
+        /* MAIN */
+        .main{
+          flex:1;
+          display:flex;
+          overflow:hidden;
+          background: rgba(11,16,32,0.3);
+        }
+
+        /* CHAT */
+        .chat-area{
+          flex:2;
+          display:flex;
+          flex-direction:column;
+          position: relative;
+        }
+
+        .chat-messages{
+          flex:1;
+          padding:32px;
+          overflow-y:auto;
+          scroll-behavior:smooth;
+          scroll-padding: 100px;
+        }
+
+        /* MESSAGE */
+        .message{
+          max-width:90%;
+          margin-bottom:24px;
+          animation: slideInUp 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          position: relative;
+        }
+
+        @keyframes slideInUp{
+          from{
+            opacity:0;
+            transform: translateY(30px) scale(0.95);
+          }
+          to{
+            opacity:1;
+            transform: translateY(0) scale(1);
+          }
+        }
+
+        .role{
+          font-size:13px;
+          opacity:.7;
+          margin-bottom:8px;
+          font-weight:500;
+          letter-spacing: 0.5px;
+          text-transform: uppercase;
+        }
+
+        .user .role { color: var(--accent-primary); }
+        .assistant .role { color: var(--accent-secondary); }
+
+        .bubble{
+          padding:20px 24px;
+          border-radius:24px;
+          line-height:1.7;
+          white-space:pre-wrap;
+          position: relative;
+          backdrop-filter: blur(20px);
+          border: 1px solid var(--glass-border);
+          transition: all 0.3s ease;
+          font-size: 15px;
+        }
+
+        .bubble:hover {
+          box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .user .bubble{
+          background: rgba(31,41,55,0.85);
+          border-left: 4px solid var(--accent-primary);
+          margin-left: auto;
+          border-radius: 24px 24px 12px 24px;
+        }
+
+        .assistant .bubble{
+          background: rgba(20,27,52,0.85);
+          border-left: 4px solid var(--accent-secondary);
+          border-radius: 24px 24px 24px 12px;
+        }
+
+        /* LOADING */
+        .loading .bubble{
+          font-style:italic;
+          opacity:.8;
+          animation: typingPulse 1.8s infinite;
+          background: rgba(20,27,52,0.6);
+        }
+
+        @keyframes typingPulse{
+          0%, 100%{opacity:.6; transform: scale(1);}
+          50%{opacity:1; transform: scale(1.02);}
+        }
+
+        .loading .bubble::after {
+          content: '...';
+          animation: dots 1.5s steps(4, end) infinite;
+        }
+
+        @keyframes dots {
+          0%, 20% { content: '.'; }
+          40% { content: '..'; }
+          60%, 100% { content: '...'; }
+        }
+
+        /* HISTORY */
+        .history{
+          flex:1;
+          background:rgba(12,15,36,0.95);
+          backdrop-filter: blur(25px);
+          border-left:1px solid var(--glass-border);
+          padding:28px;
+          overflow-y:auto;
+          position: relative;
+        }
+
+        .history::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: 3px;
+          background: linear-gradient(to bottom, var(--accent-primary), var(--accent-secondary));
+        }
+
+        .history h3{
+          color:var(--accent-secondary);
+          margin-bottom:20px;
+          font-size: 18px;
+          font-weight: 700;
+          padding-left: 16px;
+          position: relative;
+        }
+
+        .history-item{
+          border-left:3px solid transparent;
+          padding:16px 16px 16px 24px;
+          margin-bottom:16px;
+          background: rgba(255,255,255,0.03);
+          border-radius: 16px;
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255,255,255,0.08);
+          transition: all 0.3s ease;
+          cursor: pointer;
+          position: relative;
+        }
+
+        .history-item:hover {
+          background: rgba(255,255,255,0.08);
+          border-color: var(--accent-primary);
+          transform: translateX(4px);
+          box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .history-item b {
+          color: var(--accent-primary);
+          font-size: 13px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        /* INPUT */
+        .input-area{
+          padding:24px 28px;
+          background:rgba(15,18,45,0.95);
+          backdrop-filter: blur(25px);
+          border-top:1px solid var(--glass-border);
+          box-shadow: 0 -8px 32px var(--shadow-light);
+        }
+
+        .input-form{
+          display:flex;
+          gap:12px;
+          align-items: center;
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+
+        .input-form input[type="text"]{
+          flex:1;
+          padding:18px 24px;
+          border-radius:28px;
+          border:1px solid var(--glass-border);
+          background:rgba(255,255,255,0.06);
+          color:var(--text-primary);
+          outline:none;
+          font-size: 15px;
+          backdrop-filter: blur(15px);
+          transition: all 0.3s ease;
+        }
+
+        .input-form input[type="text"]:focus {
+          border-color: var(--accent-primary);
+          background: rgba(255,255,255,0.1);
+          box-shadow: 0 0 0 4px rgba(56,189,248,0.2);
+          transform: scale(1.01);
+        }
+
+        .input-form input::placeholder {
+          color: var(--text-secondary);
+        }
+
+        .send-btn{
+          width:52px;
+          height:52px;
+          border-radius:50%;
+          border:none;
+          cursor:pointer;
+          font-size:16px;
+          font-weight:600;
+          transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          backdrop-filter: blur(15px);
+          position: relative;
+          overflow: hidden;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .send-btn.primary {
+          background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+          color: #020617;
+          box-shadow: 0 8px 25px rgba(56,189,248,0.4);
+        }
+
+        .send-btn.primary:hover {
+          transform: scale(1.08) rotate(5deg);
+          box-shadow: 0 15px 40px rgba(56,189,248,0.6);
+        }
+
+        .send-btn.secondary {
+          background: rgba(255,255,255,0.1);
+          border: 1px solid var(--glass-border);
+          color: var(--text-primary);
+        }
+
+        .send-btn.secondary:hover {
+          background: rgba(255,255,255,0.2);
+          transform: scale(1.05);
+          box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        }
+
+        /* MOBILE */
+        @media(max-width:768px){
+          .main{flex-direction:column}
+          .history { padding: 20px; }
+          .chat-messages { padding: 20px; }
+          .input-form { gap: 8px; padding: 0 10px; }
+          .send-btn { width: 48px; height: 48px; }
+          .input-form input[type="text"] { padding: 16px 20px; }
+        }
+
+        @media(max-width:480px){
+          .header { padding: 0 16px; }
+          .logo { font-size: 20px; }
+          .actions { gap: 8px; }
+          .btn { padding: 8px 14px; font-size: 13px; }
+        }
+
+        /* Scrollbar */
+        .chat-messages::-webkit-scrollbar,
+        .history::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+          background: rgba(255,255,255,0.05);
+          border-radius: 10px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+          background: linear-gradient(var(--accent-primary), var(--accent-secondary));
+          border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="logo">
+            <i class="fas fa-terminal"></i>
+            HackerAI
+        </div>
+        <div class="actions">
+            <form action="/history" method="get">
+                <button class="btn" title="View History">
+                    <i class="fas fa-history"></i>
+                </button>
+            </form>
+            <form action="/" method="get">
+                <button class="btn" title="New Chat">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </form>
+            <form action="/clear" method="post">
+                <button class="btn btn-danger" title="Clear Chat">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <!-- CHAT -->
+        <div class="chat-area">
+            <div class="chat-messages" id="chatMessages">
+
+                <div th:each="chat : ${currentChat}"
+                     th:class="'message ' + (${chat.role == 'USER'} ? 'user' : 'assistant')">
+                    <div class="role" th:text="${chat.role}"></div>
+                    <div class="bubble" th:text="${chat.message}"></div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- HISTORY -->
+        <div class="history" th:if="${showHistory}">
+            <h3><i class="fas fa-clock"></i> Conversation History</h3>
+            <div th:each="chat : ${history}" class="history-item">
+                <b th:text="${chat.role}"></b>
+                <pre th:text="${chat.message}"></pre>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- INPUT -->
+    <div class="input-area">
+        <form class="input-form" onsubmit="return false;">
+            <input type="text" id="messageInput" placeholder="Ask HackerAI about pentesting, exploits, or anything...">
+
+            <input type="file" id="fileInput" hidden>
+            <button type="button" class="send-btn secondary" onclick="fileInput.click()" title="Upload File">
+                <i class="fas fa-file-code"></i>
+            </button>
+
+            <input type="file" id="imageInput" accept="image/*" hidden>
+            <button type="button" class="send-btn secondary" onclick="imageInput.click()" title="Analyze Image">
+                <i class="fas fa-image"></i>
+            </button>
+
+            <button type="button" id="micBtn" class="send-btn secondary" title="Voice Input">
+                <i class="fas fa-microphone"></i>
+            </button>
+            <button type="button" id="sendBtn" class="send-btn primary" title="Send">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </form>
+    </div>
+
+</div>
+
+<script>
+    const chat = document.getElementById("chatMessages");
+    const messageInput = document.getElementById("messageInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const fileInput = document.getElementById("fileInput");
+    const imageInput = document.getElementById("imageInput");
+    const micBtn = document.getElementById("micBtn");
+
+    /* ---------- SEND MESSAGE ---------- */
+    sendBtn.onclick = async () => {
+      const msg = messageInput.value.trim();
+      if (!msg) return;
+
+      // USER MESSAGE
+      chat.innerHTML += `
+        <div class="message user">
+          <div class="role">USER</div>
+          <div class="bubble">${escapeHtml(msg)}</div>
+        </div>`;
+
+      // LOADING
+      const loading = document.createElement("div");
+      loading.className = "message assistant loading";
+      loading.innerHTML = `
+        <div class="role">AI</div>
+        <div class="bubble">HackerAI is analyzing...</div>`;
+      chat.appendChild(loading);
+      chat.scrollTop = chat.scrollHeight;
+
+      messageInput.value = "";
+
+      try {
+        const res = await fetch("/chat-ajax", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: "message=" + encodeURIComponent(msg)
+        });
+
+        if (!res.ok) {
+          throw new Error("Server error: " + res.status);
+        }
+
+        const ans = await res.text();
+
+        loading.classList.remove("loading");
+        loading.querySelector(".bubble").textContent =
+          ans && ans.trim() ? ans : "No response from AI.";
+
+      } catch (err) {
+        loading.classList.remove("loading");
+        loading.querySelector(".bubble").textContent =
+          "⚠️ Error: AI service not responding.\nPlease try again.";
+        console.error(err);
+      }
+
+      chat.scrollTop = chat.scrollHeight;
+    };
+
+    // ESCAPE HTML
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    /* ---------- FILE ---------- */
+    fileInput.onchange = async () => {
+      const f = fileInput.files[0];
+      if (!f) return;
+
+      const loading = document.createElement("div");
+      loading.className = "message assistant loading";
+      loading.innerHTML = `
+        <div class="role">AI</div>
+        <div class="bubble">Analyzing file <strong>${f.name}</strong>...</div>`;
+      chat.appendChild(loading);
+
+      try {
+        const fd = new FormData();
+        fd.append("file", f);
+
+        const res = await fetch("/upload-file", { method: "POST", body: fd });
+        if (!res.ok) throw new Error();
+
+        loading.classList.remove("loading");
+        loading.querySelector(".bubble").textContent = await res.text();
+
+      } catch {
+        loading.classList.remove("loading");
+        loading.querySelector(".bubble").textContent =
+          "⚠️ File processing failed.";
+      }
+    };
+
+    /* ---------- IMAGE ---------- */
+    imageInput.onchange = async () => {
+      const f = imageInput.files[0];
+      if (!f) return;
+
+      const loading = document.createElement("div");
+      loading.className = "message assistant loading";
+      loading.innerHTML = `
+        <div class="role">AI</div>
+        <div class="bubble">Analyzing image...</div>`;
+      chat.appendChild(loading);
+
+      try {
+        const fd = new FormData();
+        fd.append("image", f);
+
+        const res = await fetch("/upload-image", { method: "POST", body: fd });
+        if (!res.ok) throw new Error();
+
+        loading.classList.remove("loading");
+        loading.querySelector(".bubble").textContent = await res.text();
+
+      } catch {
+        loading.classList.remove("loading");
+        loading.querySelector(".bubble").textContent =
+          "⚠️ Image analysis failed.";
+      }
+    };
+
+    /* ---------- VOICE ---------- */
+    if ('webkitSpeechRecognition' in window) {
+      const rec = new webkitSpeechRecognition();
+      rec.lang = "en-US";
+      micBtn.onclick = () => rec.start();
+      rec.onresult = e => messageInput.value = e.results[0][0].transcript;
+      rec.onend = () => micBtn.querySelector('i').className = 'fas fa-microphone';
+    } else {
+      micBtn.style.opacity = '0.5';
+      micBtn.title = 'Voice not supported';
+    }
+
+    // ENTER TO SEND
+    messageInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendBtn.click();
+      }
+    });
+
+    // AUTO-FOCUS
+    messageInput.focus();
+</script>
+
+</body>
+</html>

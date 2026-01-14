@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify OTP | AI Learning Platform</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --neon:#00f2fe;
+      --glass:rgba(255,255,255,.18);
+      --border:rgba(255,255,255,.25);
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    body{
+      font-family:'Poppins',sans-serif;
+      min-height:100vh;
+      background:radial-gradient(circle at top,#12002b,#000);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:20px;
+      color:white;
+    }
+
+    .card{
+      width:100%;
+      max-width:420px;
+      background:var(--glass);
+      backdrop-filter:blur(40px);
+      border:1px solid var(--border);
+      border-radius:32px;
+      padding:3rem 2.5rem;
+      box-shadow:0 40px 120px rgba(0,0,0,.45);
+      text-align:center;
+    }
+
+    h1{
+      font-size:2.4rem;
+      font-weight:900;
+      background:linear-gradient(135deg,#00f2fe,#f093fb);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      margin-bottom:.4rem;
+    }
+
+    p{
+      opacity:.9;
+      margin-bottom:1.8rem;
+      font-size:1rem;
+    }
+
+    .email{
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(0,242,254,.35);
+      border-radius:16px;
+      padding:.9rem;
+      margin-bottom:1.6rem;
+      font-weight:600;
+      color:var(--neon);
+      font-size:.95rem;
+    }
+
+    .error{
+      background:rgba(239,68,68,.2);
+      border-left:4px solid #ef4444;
+      padding:.8rem 1rem;
+      border-radius:14px;
+      color:#fecaca;
+      margin-bottom:1.2rem;
+      font-size:.9rem;
+    }
+
+    /* OTP BOXES */
+    .otp-boxes{
+      display:flex;
+      justify-content:space-between;
+      gap:.6rem;
+      margin-bottom:2rem;
+    }
+
+    .otp-boxes input{
+      width:52px;
+      height:62px;
+      text-align:center;
+      font-size:1.6rem;
+      font-weight:700;
+      border-radius:14px;
+      border:2px solid transparent;
+      background:rgba(255,255,255,.18);
+      color:white;
+      outline:none;
+      transition:.25s;
+    }
+
+    .otp-boxes input:focus{
+      border-color:var(--neon);
+      box-shadow:0 0 20px rgba(0,242,254,.6);
+      background:rgba(255,255,255,.25);
+    }
+
+    button{
+      width:100%;
+      padding:1.2rem;
+      border:none;
+      border-radius:26px;
+      font-size:1rem;
+      font-weight:800;
+      cursor:pointer;
+      background:linear-gradient(135deg,#00f2fe,#764ba2,#f093fb);
+      color:#020617;
+      letter-spacing:.8px;
+      transition:.4s;
+    }
+
+    button:hover{
+      transform:translateY(-4px);
+      box-shadow:0 25px 70px rgba(0,242,254,.6);
+    }
+
+    .footer{
+      margin-top:1.8rem;
+      display:flex;
+      justify-content:center;
+      gap:1.6rem;
+      font-size:.9rem;
+    }
+
+    .footer a{
+      color:rgba(255,255,255,.85);
+      text-decoration:none;
+      font-weight:600;
+    }
+
+    .footer a:hover{
+      color:var(--neon);
+      text-shadow:0 0 12px rgba(0,242,254,.8);
+    }
+
+    @media(max-width:420px){
+      .card{padding:2.2rem 1.6rem}
+      .otp-boxes input{width:44px;height:56px}
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="card">
+
+  <h1>Verify OTP 🔐</h1>
+  <p>Enter the 6-digit code sent to your email</p>
+
+  <div class="email">
+    <span th:text="${email}">user@email.com</span>
+  </div>
+
+  <div th:if="${message}" class="error" th:text="${message}"></div>
+
+  <!-- REAL OTP FORM -->
+  <form th:action="@{/auth/ver}" method="post" id="otpForm">
+
+    <div class="otp-boxes">
+      <input type="text" maxlength="1" inputmode="numeric">
+      <input type="text" maxlength="1" inputmode="numeric">
+      <input type="text" maxlength="1" inputmode="numeric">
+      <input type="text" maxlength="1" inputmode="numeric">
+      <input type="text" maxlength="1" inputmode="numeric">
+      <input type="text" maxlength="1" inputmode="numeric">
+    </div>
+
+    <!-- hidden real OTP -->
+    <input type="hidden" name="otp" id="otp">
+
+    <button type="submit">Verify & Continue</button>
+  </form>
+
+  <div class="footer">
+    <a href="#" onclick="history.back()">← Back</a>
+    <a href="#">Resend OTP</a>
+  </div>
+
+</div>
+
+<script>
+  const inputs = document.querySelectorAll('.otp-boxes input');
+  const hiddenOtp = document.getElementById('otp');
+  const form = document.getElementById('otpForm');
+
+  inputs[0].focus();
+
+  inputs.forEach((input, index) => {
+
+    input.addEventListener('input', e => {
+      input.value = input.value.replace(/[^0-9]/g,'');
+      if(input.value && index < inputs.length - 1){
+        inputs[index + 1].focus();
+      }
+      updateOtp();
+    });
+
+    input.addEventListener('keydown', e => {
+      if(e.key === 'Backspace' && !input.value && index > 0){
+        inputs[index - 1].focus();
+      }
+    });
+
+  });
+
+  function updateOtp(){
+    let otp = '';
+    inputs.forEach(i => otp += i.value);
+    hiddenOtp.value = otp;
+    if(otp.length === 6){
+      form.submit();
+    }
+  }
+
+  // Paste support
+  document.addEventListener('paste', e => {
+    const data = e.clipboardData.getData('text').replace(/[^0-9]/g,'').slice(0,6);
+    if(data.length === 6){
+      inputs.forEach((input,i)=>input.value=data[i]);
+      updateOtp();
+    }
+  });
+</script>
+
+</body>
+</html>
